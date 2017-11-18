@@ -270,7 +270,7 @@ Plugin 'vim-scripts/OmniCppComplete'
 "自动补全
 Plugin 'vim-scripts/AutoComplPop'
 "显示函数声明 需要生成tags
-Plugin 'mbbill/echofunc'
+"Plugin 'mbbill/echofunc'
 call vundle#end()            
 filetype plugin indent on    
 
@@ -315,6 +315,7 @@ set tags+=./tags
 set tags+=/usr/include/tags
 set tags+=~/.vim/systags
 set tags+=~/.vim/x86_64-linux-gnu-systags
+set tags+=~/Code/linux-4.14/tags
 let g:ycm_collect_identifiers_from_tags_files = 1
 " let g:ycm_semantic_triggers = {} 
 let g:ycm_semantic_triggers =  {
@@ -339,8 +340,8 @@ imap <silent> <F7> <Plug>MarkdownPreview
 nmap <silent> <F8> <Plug>StopMarkdownPreview
 imap <silent> <F8> <Plug>StopMarkdownPreview
 
-"去空行
-map <F6> :g/^\s*$/d<CR>
+"去多行空行只保留一行
+map <F6> :g/^\s*$\n\s*$/d<CR>
 
 " change-colorscheme
 map <F10> :NextColorScheme<CR>
