@@ -224,6 +224,7 @@ filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 " vundle 管理的插件列表必须位于vundle#begin()和vundle#end()之间
+Plugin 'altercation/vim-colors-solarized'
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'L9'
 Plugin 'chxuan/change-colorscheme'
