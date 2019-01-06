@@ -215,6 +215,7 @@ func SetTitle()
     elseif expand("%:e") == 'hpp'
 		call setline(1, "#pragma once")
 	endif
+
 endfunc 
 autocmd BufNewFile * normal G
 
@@ -224,7 +225,6 @@ filetype off
 set rtp+=~/.vim/bundle/Vundle.vim
 call vundle#begin()
 " vundle 管理的插件列表必须位于vundle#begin()和vundle#end()之间
-Plugin 'altercation/vim-colors-solarized'
 Plugin 'VundleVim/Vundle.vim'
 Plugin 'L9'
 Plugin 'chxuan/change-colorscheme'
@@ -236,7 +236,9 @@ Plugin 'iamcco/mathjax-support-for-mkdp'
 Plugin 'iamcco/markdown-preview.vim'
 "Plugin 'Valloric/YouCompleteMe'
 Plugin 'jiangmiao/auto-pairs'
+"代码注释  <leader>cc 注释 <leader>cu 反注释
 Plugin 'scrooloose/nerdcommenter'
+"文件目录 ma 添加 md 删除 mm修改名字
 Plugin 'scrooloose/nerdtree'
 Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
 Plugin 'rkulla/pydiction'
@@ -250,6 +252,7 @@ Plugin 'tpope/vim-repeat'
 Plugin 'tpope/vim-endwise'
 Plugin 'ctrlpvim/ctrlp.vim'
 Plugin 'majutsushi/tagbar'
+"c++高亮增强
 Plugin 'octol/vim-cpp-enhanced-highlight'
 "vim 提示栏增强工具
 Plugin 'vim-airline/vim-airline'
@@ -260,6 +263,7 @@ Plugin 'vim-scripts/txt.vim'
 Plugin 'gorodinskiy/vim-coloresque'
 Plugin 'will133/vim-dirdiff'
 Plugin 'mhinz/vim-startify'
+Plugin 'ryanoasis/vim-devicons'
 "tab键代码补全 如输入main按tab键补全main函数
 "要将vim-snippets中的snippets放到bundle外才可以使用
 Plugin 'MarcWeber/vim-addon-mw-utils'
@@ -270,6 +274,24 @@ Plugin 'honza/vim-snippets'
 Plugin 'vim-scripts/OmniCppComplete'
 "自动补全
 Plugin 'vim-scripts/AutoComplPop'
+Plugin 'morhetz/gruvbox'
+Plugin 'idanarye/vim-vebugger'
+"书签插件
+Plugin 'kshenoy/vim-signature'
+"内容查找 需安装ack
+Plugin 'dyng/ctrlsf.vim'
+"多行编辑 选中后ctrl + n
+Plugin 'terryma/vim-multiple-cursors'
+"查询更改历史  F9
+Plugin 'mbbill/undotree'
+"接口快速生成实现框架
+Plugin 'derekwyatt/vim-protodef'
+Plugin 'derekwyatt/vim-fswitch'
+"静态检查
+Plugin 'w0rp/ale'
+"括号美化
+Plugin 'luochen1990/rainbow'
+
 "显示函数声明 需要生成tags
 "Plugin 'mbbill/echofunc'
 call vundle#end()            
@@ -281,8 +303,9 @@ runtime macros/matchit.vim
 """""""""""""""""""""""""""""""""""
 "配置设置
 """""""""""""""""""""""""""""""""""
-
+set clipboard+=unnamed   
 " a.vim: .h -> .cpp or .cpp -> .h 切换.h和.cpp
+"nnoremap <silent> <F2> :A<CR>
 nnoremap <silent> <F2> :A<CR>
 
 " tagbar
@@ -305,7 +328,7 @@ imap <F4> <ESC> :NERDTreeToggle<CR>
 "autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
 " ctags
-nmap <F5> :call RunShell("Generate tags","ctags -R --c++-kinds=+p --fields=+iaS --extra=+q .") <CR>
+nmap <F5> :call RunShell("Generate tags","ctags -R --c++-kinds=+p+l+x+c+d+e+f+g+m+n+s+t+u+v --fields=+iaS --extra=+q .") <CR>
 function RunShell(Msg,Shell)
     echo a:Msg . '...'
     call system(a:Shell)
@@ -335,20 +358,29 @@ let g:ycm_semantic_triggers =  {
 let g:ycm_semantic_triggers.c = ['->', '.', ' ', '(', '[', '&',']']
 
 " markdown
-let g:mkdp_path_to_chrome = "firefox"
-nmap <silent> <F7> <Plug>MarkdownPreview
-imap <silent> <F7> <Plug>MarkdownPreview
-nmap <silent> <F8> <Plug>StopMarkdownPreview
-imap <silent> <F8> <Plug>StopMarkdownPreview
+let g:mkdp_path_to_chrome = "Safari"
+"nmap <silent> <F7> <Plug>termdebug
+"imap <silent> <F7> <Plug>termdebug
+"nmap <silent> <F8> <Plug>StopMarkdownPreview
+"imap <silent> <F8> <Plug>StopMarkdownPreview
+"调出terminal 和 gdb
+nnoremap <F7> :Termdebug<CR>
+nnoremap <F8> :terminal<CR>
+let g:vebugger_leader='<Leader>'
+
 
 "去多行空行只保留一行
 map <F6> :g/^\s*$\n\s*$/d<CR>
 
 " change-colorscheme
-map <F10> :NextColorScheme<CR>
-imap <F10> <ESC> :NextColorScheme<CR>
-map <F9> :PreviousColorScheme<CR>
-imap <F9> <ESC> :PreviousColorScheme<CR>
+map <F11> :NextColorScheme<CR>
+imap <F11> <ESC> :NextColorScheme<CR>
+map <F10> :PreviousColorScheme<CR>
+imap <F10> <ESC> :PreviousColorScheme<CR>
+
+nnoremap <F9> :UndotreeToggle<cr>
+set undofile
+set undodir=~/.undodir/
 
 
 "空格键切换命令模式
@@ -356,7 +388,7 @@ nnoremap <space> :
 "选中状态下ctrl+c复制
 vmap <C-c> +y
 "ctrl+a全选
-map <C-a> ggVG
+"map <C-a> ggVG
 "map! <C-a> <ESC>ggVG
 
 " colorscheme
@@ -469,3 +501,66 @@ let g:pydiction_menu_height=10
 "当有多个时用ctrl+e翻页
 let g:EchoFuncKeyPrev='<C-e>'
 let g:EchoFuncAutoStartBalloonDeclaration = 1
+
+"set guifont=Roboto_Mono_for_Powerline:h11
+"set guifont=Droid\ Sans\ Mono\ for\ Powerline\ :h11
+"
+set guifont=Droid\ Sans\ Mono\ for\ Powerline\ Nerd\ Font:h12
+let g:airline_powerline_fonts = 1
+
+packadd termdebug
+
+"CtrlSF 快捷键映射
+nnoremap <Leader>fp :CtrlSF<CR>
+
+"成员函数的实现顺序与声明顺序一致   接口快速生成实现框架
+let g:disable_protodef_sorting=1
+let g:protodefprotogetter='~/.vim/bundle/vim-protodef/pullproto.pl'
+
+
+"rainbow 括号美化
+let g:rainbow_active = 1
+let g:rainbow_conf = {
+\   'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick'],
+\   'ctermfgs': ['lightblue', 'darkyellow', 'lightcyan', 'lightmagenta'],
+\   'operators': '_,_',
+\   'parentheses': ['start=/(/ end=/)/ fold', 'start=/\[/ end=/\]/ fold', 'start=/{/ end=/}/ fold'],
+\   'separately': {
+\       '*': {},
+\       'tex': {
+\           'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/'],
+\       },
+\       'lisp': {
+\           'guifgs': ['royalblue3', 'darkorange3', 'seagreen3', 'firebrick', 'darkorchid3'],
+\       },
+\       'vim': {
+\           'parentheses': ['start=/(/ end=/)/', 'start=/\[/ end=/\]/', 'start=/{/ end=/}/ fold', 'start=/(/ end=/)/ containedin=vimFuncBody', 'start=/\[/ end=/\]/ containedin=vimFuncBody', 'start=/{/ end=/}/ fold containedin=vimFuncBody'],
+\       },
+\       'html': {
+\           'parentheses': ['start=/\v\<((area|base|br|col|embed|hr|img|input|keygen|link|menuitem|meta|param|source|track|wbr)[ >])@!\z([-_:a-zA-Z0-9]+)(\s+[-_:a-zA-Z0-9]+(\=("[^"]*"|'."'".'[^'."'".']*'."'".'|[^ '."'".'"><=`]*))?)*\>/ end=#</\z1># fold'],
+\       },
+\       'css': 0,
+\   }
+\}
+
+
+"静态代码检查 ale
+"始终开启标志列
+let g:ale_sign_column_always = 1
+let g:ale_set_highlights = 0
+"自定义error和warning图标
+"let g:ale_sign_error = '✗'
+"let g:ale_sign_warning = '⚡'
+""在vim自带的状态栏中整合ale
+"let g:ale_statusline_format = ['✗ %d', '⚡ %d', '✔ OK']
+""显示Linter名称,出错或警告等相关信息
+"let g:ale_echo_msg_error_str = 'E'
+"let g:ale_echo_msg_warning_str = 'W'
+"let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+"普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
+nmap sp <Plug>(ale_previous_wrap)
+nmap sn <Plug>(ale_next_wrap)
+"<Leader>s触发/关闭语法检查
+nmap <Leader>s :ALEToggle<CR>
+"<Leader>d查看错误或警告的详细信息
+nmap <Leader>d :ALEDetail<CR>
