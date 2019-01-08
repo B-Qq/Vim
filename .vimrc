@@ -176,24 +176,25 @@ set fileencodings=utf8,ucs-bom,gbk,cp936,gb2312,gb18030
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 autocmd BufNewFile *.cpp,*.cc,*.c,*.hpp,*.h,*.sh,*.py exec ":call SetTitle()" 
 func SetTitle() 
-   " if &filetype == 'sh'   
-   "     call setline(1,"\#########################################################################")   
-   "     call append(line("."), "\# File Name: ".expand("%"))   
-   "     call append(line(".")+1, "\# Author: ma6174")   
-   "     call append(line(".")+2, "\# mail: ma6174@163.com")   
-   "     call append(line(".")+3, "\# Created Time: ".strftime("%c"))   
-   "     call append(line(".")+4, "\#########################################################################")   
-   "     call append(line(".")+5, "\#!/bin/bash")   
-   "     call append(line(".")+6, "")   
-   " else   
-   "     call setline(1, "/*************************************************************************")   
-   "     call append(line("."), "    > File Name: ".expand("%"))   
-   "     call append(line(".")+1, "    > Author: ma6174")   
-   "     call append(line(".")+2, "    > Mail: ma6174@163.com ")   
-   "     call append(line(".")+3, "    > Created Time: ".strftime("%c"))   
-   "     call append(line(".")+4, " ************************************************************************/")   
-   "     call append(line(".")+5, "")  
-   " endif  
+    if &filetype == 'sh'   
+        call setline(1,"\#########################################################################")   
+        call append(line("."), "\# File Name: ".expand("%"))   
+        call append(line(".")+1, "\# Author: ma6174")   
+        call append(line(".")+2, "\# mail: ma6174@163.com")   
+        call append(line(".")+3, "\# Created Time: ".strftime("%c"))   
+        call append(line(".")+4, "\#########################################################################")   
+        call append(line(".")+5, "\#!/bin/bash")   
+        call append(line(".")+6, "")   
+    else   
+        call setline(1, "/*************************************************************************")   
+        call append(line("."), "/*************************************************************************")
+        call append(line(".")+1, "    > File Name: ".expand("%"))   
+        call append(line(".")+2, "    > Author: Bq")   
+        call append(line(".")+3, "    > Mail: bq5773718@163.com ")   
+        call append(line(".")+4, "    > Created Time: ".strftime("%c"))   
+        call append(line(".")+5, " ************************************************************************/")   
+        call append(line(".")+6, "")  
+    endif  
 	if expand("%:e") == 'sh'
 		call setline(1,"\#!/bin/bash") 
 		call append(line("."), "") 
@@ -238,8 +239,10 @@ Plugin 'iamcco/markdown-preview.vim'
 Plugin 'jiangmiao/auto-pairs'
 "代码注释  <leader>cc 注释 <leader>cu 反注释
 Plugin 'scrooloose/nerdcommenter'
+
 "文件目录 ma 添加 md 删除 mm修改名字
 Plugin 'scrooloose/nerdtree'
+
 Plugin 'rstacruz/sparkup', {'rtp': 'vim/'}
 Plugin 'rkulla/pydiction'
 Plugin 'Valloric/MatchTagAlways'
@@ -275,7 +278,6 @@ Plugin 'vim-scripts/OmniCppComplete'
 "自动补全
 Plugin 'vim-scripts/AutoComplPop'
 Plugin 'morhetz/gruvbox'
-Plugin 'idanarye/vim-vebugger'
 "书签插件
 Plugin 'kshenoy/vim-signature'
 "内容查找 需安装ack
@@ -291,6 +293,14 @@ Plugin 'derekwyatt/vim-fswitch'
 Plugin 'w0rp/ale'
 "括号美化
 Plugin 'luochen1990/rainbow'
+"任务列表 TODO
+Plugin 'vim-scripts/TaskList.vim'
+"异步运行
+Plugin 'skywind3000/asyncrun.vim'
+"ack
+Plugin 'mileszs/ack.vim'
+"自动索引tags
+Plugin 'ludovicchabant/vim-gutentags'
 
 "显示函数声明 需要生成tags
 "Plugin 'mbbill/echofunc'
@@ -310,8 +320,8 @@ nnoremap <silent> <F2> :A<CR>
 
 " tagbar
 " 用系统默认路径
-"let g:tagbar_ctags_bin = '/usr/bin/ctags' "linux
- let g:tagbar_ctags_bin = '/usr/local/bin/ctags' "mac
+let g:tagbar_ctags_bin = '/usr/bin/ctags' "linux
+"let g:tagbar_ctags_bin = '/usr/local/bin/ctags' "mac
 let g:tagbar_width = 30
 "开启自动预览 
 "let g:tagbar_autopreview = 1
@@ -327,6 +337,30 @@ imap <F4> <ESC> :NERDTreeToggle<CR>
 "autocmd vimenter * if !argc() | NERDTree | endif
 "autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTreeType") && b:NERDTreeType == "primary") | q | endif
 
+" o 打开关闭文件或目录
+" e 以文件管理的方式打开选中的目录
+" t 在标签页中打开
+" T 在标签页中打开，但光标仍然留在 NERDTree
+" r 刷新光标所在的目录
+" R 刷新当前根路径
+" X 收起所有目录
+" p 小写，跳转到光标所在的上一级路径
+" P 大写，跳转到当前根路径
+" J 到第一个节点
+" K 到最后一个节点
+" I 显示隐藏文件
+" m 显示文件操作菜单
+" C 将根路径设置为光标所在的目录
+" u 设置上级目录为根路径
+" ctrl + w + w 光标自动在左右侧窗口切换
+" ctrl + w + r 移动当前窗口的布局位置
+" :tabc 关闭当前的 tab
+" :tabo   关闭所有其他的 tab
+" :tabp   前一个 tab
+" :tabn   后一个 tab
+" gT      前一个 tab
+" gt      后一个 tab
+
 " ctags
 nmap <F5> :call RunShell("Generate tags","ctags -R --c++-kinds=+p+l+x+c+d+e+f+g+m+n+s+t+u+v --fields=+iaS --extra=+q .") <CR>
 function RunShell(Msg,Shell)
@@ -340,22 +374,22 @@ set tags+=/usr/include/tags
 set tags+=~/.vim/systags
 set tags+=~/.vim/x86_64-linux-gnu-systags
 set tags+=~/Code/linux-4.14/tags
-let g:ycm_collect_identifiers_from_tags_files = 1
-" let g:ycm_semantic_triggers = {} 
-let g:ycm_semantic_triggers =  {
-  \   'c' : ['->', '.','re![_a-zA-z0-9]'],
-  \   'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
-  \             're!\[.*\]\s'],
-  \   'ocaml' : ['.', '#'],
-  \   'cpp,objcpp' : ['->', '.', '::','re![_a-zA-Z0-9]'],
-  \   'perl' : ['->'],
-  \   'php' : ['->', '::'],
-  \   'cs,java,javascript,typescript,d,python,perl6,scala,vb,elixir,go' : ['.'],
-  \   'ruby' : ['.', '::'],
-  \   'lua' : ['.', ':'],
-  \   'erlang' : [':'],
-  \ }
-let g:ycm_semantic_triggers.c = ['->', '.', ' ', '(', '[', '&',']']
+
+"let g:ycm_collect_identifiers_from_tags_files = 1
+"let g:ycm_semantic_triggers =  {
+"  \   'c' : ['->', '.','re![_a-zA-z0-9]'],
+"  \   'objc' : ['->', '.', 're!\[[_a-zA-Z]+\w*\s', 're!^\s*[^\W\d]\w*\s',
+"  \             're!\[.*\]\s'],
+"  \   'ocaml' : ['.', '#'],
+"  \   'cpp,objcpp' : ['->', '.', '::','re![_a-zA-Z0-9]'],
+"  \   'perl' : ['->'],
+"  \   'php' : ['->', '::'],
+"  \   'cs,java,javascript,typescript,d,python,perl6,scala,vb,elixir,go' : ['.'],
+"  \   'ruby' : ['.', '::'],
+"  \   'lua' : ['.', ':'],
+"  \   'erlang' : [':'],
+"  \ }
+"let g:ycm_semantic_triggers.c = ['->', '.', ' ', '(', '[', '&',']']
 
 " markdown
 let g:mkdp_path_to_chrome = "Safari"
@@ -366,22 +400,19 @@ let g:mkdp_path_to_chrome = "Safari"
 "调出terminal 和 gdb
 nnoremap <F7> :Termdebug<CR>
 nnoremap <F8> :terminal<CR>
-let g:vebugger_leader='<Leader>'
-
 
 "去多行空行只保留一行
 map <F6> :g/^\s*$\n\s*$/d<CR>
 
 " change-colorscheme
-map <F11> :NextColorScheme<CR>
-imap <F11> <ESC> :NextColorScheme<CR>
-map <F10> :PreviousColorScheme<CR>
-imap <F10> <ESC> :PreviousColorScheme<CR>
+"map <F11> :NextColorScheme<CR>
+"imap <F11> <ESC> :NextColorScheme<CR>
+"map <F10> :PreviousColorScheme<CR>
+"imap <F10> <ESC> :PreviousColorScheme<CR>
 
 nnoremap <F9> :UndotreeToggle<cr>
 set undofile
 set undodir=~/.undodir/
-
 
 "空格键切换命令模式
 nnoremap <space> :
@@ -441,7 +472,6 @@ set guifont=Droid\ Sans\ Mono\ for\ Powerline\ Nerd\ Font\ Complete\ 12
 map /  <Plug>(incsearch-forward)
 map ?  <Plug>(incsearch-backward)
 map g/ <Plug>(incsearch-stay)
-
 
 " vim-easymotion
 let g:EasyMotion_smartcase = 1
@@ -517,7 +547,6 @@ nnoremap <Leader>fp :CtrlSF<CR>
 let g:disable_protodef_sorting=1
 let g:protodefprotogetter='~/.vim/bundle/vim-protodef/pullproto.pl'
 
-
 "rainbow 括号美化
 let g:rainbow_active = 1
 let g:rainbow_conf = {
@@ -543,24 +572,72 @@ let g:rainbow_conf = {
 \   }
 \}
 
-
 "静态代码检查 ale
 "始终开启标志列
 let g:ale_sign_column_always = 1
 let g:ale_set_highlights = 0
 "自定义error和warning图标
-"let g:ale_sign_error = '✗'
-"let g:ale_sign_warning = '⚡'
+let g:ale_sign_error = '--'
+let g:ale_sign_warning = '!!'
 ""在vim自带的状态栏中整合ale
-"let g:ale_statusline_format = ['✗ %d', '⚡ %d', '✔ OK']
+let g:ale_statusline_format = ['✗ %d', '⚡ %d', '✔ OK']
 ""显示Linter名称,出错或警告等相关信息
-"let g:ale_echo_msg_error_str = 'E'
-"let g:ale_echo_msg_warning_str = 'W'
-"let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
-"普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
+let g:ale_echo_msg_error_str = 'E'
+let g:ale_echo_msg_warning_str = 'W'
+let g:ale_echo_msg_format = '[%linter%] %s [%severity%]'
+""普通模式下，sp前往上一个错误或警告，sn前往下一个错误或警告
 nmap sp <Plug>(ale_previous_wrap)
 nmap sn <Plug>(ale_next_wrap)
 "<Leader>s触发/关闭语法检查
 nmap <Leader>s :ALEToggle<CR>
 "<Leader>d查看错误或警告的详细信息
 nmap <Leader>d :ALEDetail<CR>
+let g:ale_linters = {
+            \   'c++': ['g++'],
+            \   'c': ['gcc']
+            \}
+
+let g:ale_c_gcc_options = '-Wall -O2 -std=c99'
+let g:ale_cpp_gcc_options = '-Wall -O2 -std=c++11'
+let g:ale_c_cppcheck_options = ''
+let g:ale_cpp_cppcheck_options = ''
+
+"TODOLIST 快捷键
+map <leader>td <Plug>TaskList
+
+" 自动打开 quickfix window ，高度为 6
+"let g:asyncrun_open = 6
+"" 设置 F10 打开/关闭 Quickfix 窗口
+nnoremap <F10> :call asyncrun#quickfix_toggle(6)<cr>"
+let g:asyncrun_rootmarks = ['.svn', '.git', '.root', '_darcs', 'build.xml'] 
+"执行makefile
+nnoremap <silent> <F12> :AsyncRun -cwd=<root> make <cr>
+
+"YCM
+let g:ycm_add_preview_to_completeopt = 0
+let g:ycm_show_diagnostics_ui = 0
+let g:ycm_server_log_level = 'info'
+let g:ycm_min_num_identifier_candidate_chars = 2
+let g:ycm_collect_identifiers_from_comments_and_strings = 1
+let g:ycm_complete_in_strings=1
+let g:ycm_key_invoke_completion = '<c-z>'
+set completeopt=menu,menuone
+noremap <c-z> <NOP>
+let g:ycm_semantic_triggers =  {
+            \ 'c,cpp,python,java,go,erlang,perl': ['re!\w{2}'],
+            \ 'cs,lua,javascript': ['re!\w{2}'],
+                                \}
+"ack 搜索
+map <F11> :Ack -i
+
+" gutentags 搜索工程目录的标志，碰到这些文件/目录名就停止向上一级目录递归
+let g:gutentags_project_root = ['.root', '.svn', '.git', '.hg', '.project']
+" 所生成的数据文件的名称
+let g:gutentags_ctags_tagfile = '.tags'
+" 将自动生成的 tags 文件全部放入 ~/.cache/tags 目录中，避免污染工程目录
+let s:vim_tags = expand('~/.cache/tags')
+let g:gutentags_cache_dir = s:vim_tags
+" 配置 ctags 的参数
+let g:gutentags_ctags_extra_args = ['--fields=+niazS', '--extra=+q']
+let g:gutentags_ctags_extra_args += ['--c++-kinds=+px']
+let g:gutentags_ctags_extra_args += ['--c-kinds=+px']
